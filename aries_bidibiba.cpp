@@ -5,6 +5,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <unistd.h>
 #include <cstdlib>
@@ -15,6 +16,7 @@
 #include <map>
 #include <cstdint>
 #include <cstring>
+#include <ctime>
 
 static const unsigned long MSG_SIZE = 1<<20;
 static const unsigned long WINDOW_SIZE = 64; 
@@ -30,9 +32,9 @@ int getAriesGrp(){
     if (hostname[0] == 'n' && hostname[2] == 'd'){
         int nid = atoi((hostname+3));
         // 384 nodes in an Aries group
-        return nid/384;
         // For debug purposes
         //return nid;
+        return nid/384;
     }
     else{
         cerr << "Error: hostname not nid####: " << hostname << "\n";
@@ -258,8 +260,12 @@ int main(int argc, char* argv[]){
     }
     if (my_rank == 0){
         //Write out the results
+        auto t = time(nullptr);
+        ostringstream oss;
+        oss << "bidibiba_" << t << ".out";
+        string fname = oss.str();
         ofstream results_file;
-        results_file.open("bidibiba.out");
+        results_file.open(fname);
         results_file << "Node1, Grp1, Node2, Grp2, BW(MiB/s)\n";
         // Each rank j (nodeid nbuf[j]) sends/recvs from rank (sbuf[j]) 
         // convert sbuf[j] to nodeid (nbuf)
