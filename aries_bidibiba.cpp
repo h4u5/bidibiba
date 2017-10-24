@@ -20,6 +20,8 @@
 
 static const unsigned long MSG_SIZE = 1<<20;
 static const unsigned long WINDOW_SIZE = 64; 
+//Assumes each rank is getting around 400MB/s
+static const unsigned long MAX_LOOPS = 120000; 
 
 using namespace std;
 
@@ -238,19 +240,21 @@ int main(int argc, char* argv[]){
             memset(rdata, 'r', MSG_SIZE);
 
             tstart = MPI_Wtime();
-            for (int j = 0; j < WINDOW_SIZE; j++){
-                MPI_Irecv(rdata, MSG_SIZE, MPI_CHAR, partner, 100, MPI_COMM_WORLD, rrequest + j);
+            for (int loop = 0; loop < MAX_LOOPS; loop++){
+                for (int j = 0; j < WINDOW_SIZE; j++){
+                    MPI_Irecv(rdata, MSG_SIZE, MPI_CHAR, partner, 100, MPI_COMM_WORLD, rrequest + j);
+                }
+                for (int j = 0; j < WINDOW_SIZE; j++){
+                    MPI_Isend(sdata, MSG_SIZE, MPI_CHAR, partner, 100, MPI_COMM_WORLD, srequest + j);
+                }
+                MPI_Waitall(WINDOW_SIZE, srequest, sstat);
+                MPI_Waitall(WINDOW_SIZE, rrequest, rstat);
             }
-            for (int j = 0; j < WINDOW_SIZE; j++){
-                MPI_Isend(sdata, MSG_SIZE, MPI_CHAR, partner, 100, MPI_COMM_WORLD, srequest + j);
-            }
-            MPI_Waitall(WINDOW_SIZE, srequest, sstat);
-            MPI_Waitall(WINDOW_SIZE, rrequest, rstat);
             //Barrier
             tend = MPI_Wtime();
             t = tend - tstart;
             //Calculate bandwidth
-            bidibw = MSG_SIZE / (1024*1024) * WINDOW_SIZE;
+            bidibw = MSG_SIZE / (1024*1024) * MAX_LOOPS * WINDOW_SIZE;
             bidibw /= t;
             //Gather results back at root
             free(sdata);
@@ -282,7 +286,8 @@ int main(int argc, char* argv[]){
         double t_sum, t_min, t_mean, t_50, t_75, t_max;
         vector <double> tvec(tbuf, tbuf + sizeof(tbuf)/sizeof(double));
         //Removing the values for ranks that didn't participlate
-        remove_if(tvec.begin(), tvec.end(), isZero);
+        
+        tvec.erase(remove_if(tvec.begin(), tvec.end(), isZero), tvec.end());
         sort(tvec.begin(), tvec.end());
         cout << "A total of " << tvec.size() << " nodes participating from " 
             << groups.size() << " groups.\n"; 
