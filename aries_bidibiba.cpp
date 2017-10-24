@@ -21,7 +21,8 @@
 static const unsigned long MSG_SIZE = 1<<20;
 static const unsigned long WINDOW_SIZE = 64; 
 //Assumes each rank is getting around 400MB/s
-static const unsigned long MAX_LOOPS = 120000; 
+static const unsigned long MAX_LOOPS = 1875; 
+//static const unsigned long MAX_LOOPS = 100; 
 
 using namespace std;
 
@@ -101,7 +102,7 @@ int main(int argc, char* argv[]){
     int32_t nbuf[num_procs];
     //Stores the pair for this rank
     int32_t partner;
-    double bidibw = 0;
+    double bw = 0;
     double tbuf[num_procs];
     char *sdata, *rdata;
     double t = 0.0, tstart = 0.0, tend = 0.0;
@@ -172,7 +173,6 @@ int main(int argc, char* argv[]){
             //Determine the smallest number of nodes (assuming at least two Aries groups)
             vector <pair<int, int>>::iterator vpit;
             vpit = grp_sz_id.begin();
-            //Don't want to go outside of vector address space.  Need to check bounds. 
             if(groups.size() <= 1){
                 cerr << "Failure: Must have at least two Aries Groups in allocation.  Get more nodes...\n";
                 MPI_Finalize();
@@ -254,13 +254,13 @@ int main(int argc, char* argv[]){
             tend = MPI_Wtime();
             t = tend - tstart;
             //Calculate bandwidth
-            bidibw = MSG_SIZE / (1024*1024) * MAX_LOOPS * WINDOW_SIZE;
-            bidibw /= t;
+            bw = MSG_SIZE / (1024*1024) * MAX_LOOPS * WINDOW_SIZE;
+            bw /= t;
             //Gather results back at root
             free(sdata);
             free(rdata);
         }
-        MPI_Gather(&bidibw, 1, MPI_DOUBLE, &tbuf, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);  
+        MPI_Gather(&bw, 1, MPI_DOUBLE, &tbuf, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);  
     }
     if (my_rank == 0){
         //Write out the results
