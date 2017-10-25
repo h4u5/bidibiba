@@ -168,7 +168,7 @@ int main(int argc, char* argv[]){
             for(mit = groups.begin(); mit != groups.end(); mit++){
                 grp_sz_id.push_back(pair <int, int> (mit->second.getSize(), mit->second.getID()));
             }
-            sort(grp_sz_id.begin(), grp_sz_id.end());
+            sort(grp_sz_id.begin(), grp_sz_id.end(), greater<int>());
             
             //Determine the smallest number of nodes (assuming at least two Aries groups)
             vector <pair<int, int>>::iterator vpit;
@@ -190,7 +190,7 @@ int main(int argc, char* argv[]){
                 groups[grp1].shuffle();
                 groups[grp2].shuffle();
                 //Groups are sorted so we know grp1.size <= grp2.size
-                int min_sz = groups[grp1].getSize();
+                int min_sz = groups[grp2].getSize();
                 //Get two vectors of ranks that we can assign to each other
                 vector <int> ranks1 = groups[grp1].getRanks(min_sz);
                 vector <int> ranks2 = groups[grp2].getRanks(min_sz);
