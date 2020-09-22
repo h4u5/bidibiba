@@ -1,0 +1,30 @@
+Contact: Taylor Groves -- tgroves@lbl.gov
+
+This is a basic BIDIrectional BIsection BAndwidth test for the Aries network.
+Designed to test the capabilities of adaptive routing and put as much traffic onto the network as possible.
+
+Bidirectional: node pairs BOTH send AND receive data from each other.
+
+Bisection: This program splits an allocation into two physical sets of nodes (A,B), 
+so that each node 'a' in A communicates with a node 'b' in B.
+When the two sets are made, the program makes sure that 'a' and 'b' are in different
+physical partitions of the Aries network (called groups).
+
+Aries groups consist of 384 nodes which contain an optical connection 
+to every other Aries group in the network.
+Additionally, the program is configured to make pairs of Aries groups (X,Y) from the two partitions of nodes (A,B), 
+such that any node 'a' in (A,X) only communicates with node 'b' in (B,Y).
+We do this to create bandwidth bottlenecks and force adaptive routing for performance.
+On Cori, each Aries group has 16 paths to any other group.  
+If all the nodes in X want to communicate with nodes in Y the minimal path is oversubscribed by.
+(384/16) * (10/9) = 1:0.0375
+This forces adaptive routing, or minimal routing will achieve a couple hundred MBps.
+
+This is designed to run across the entire system, but you can run/test it on a random allocation of nodes, 
+provided the allocated nodes come from at least two Aries groups.
+If given an arbitrary allocation, the program will create as many connections as possible across the bisection.
+
+The program writes to file a mapping of each nodeid, group pair and a measured unidirectional bandwidth.
+To get the Bidirectional bandwidth add the two rows associated with a given node-pair.
+
+A brief summary of the run is produced to stdout.
