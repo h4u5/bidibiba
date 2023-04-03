@@ -3,6 +3,7 @@
 #SBATCH -C gpu
 #SBATCH --gpus-per-node=4
 #SBATCH --exclusive
+#SBATCH -q regular
 #SBATCH -A nstaff_g
 #SBATCH -J bidibiba-GPU
 #SBATCH --mail-user=tgroves@lbl.gov

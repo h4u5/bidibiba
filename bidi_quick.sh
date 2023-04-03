@@ -1,6 +1,5 @@
 #!/bin/bash
-#SBATCH -N 386
-#SBATCH -C knl
+#SBATCH -N 192
 #SBATCH -q regular
 #SBATCH -J bidibiba-quick
 #SBATCH --mail-user=tgroves@lbl.gov
@@ -14,4 +13,4 @@ export OMP_PROC_BIND=spread
 
 
 #run the application:
-srun -n 386 -c 272 --cpu_bind=cores $HOME/Aries/Benchmarks/BIDIBIBA/bidibiba
+srun --ntasks=384 --ntasks-per-node=2 -G 4 --cpu_bind=cores /global/cfs/cdirs/m888/tgroves/network_benchmarking/bidibiba/bidibiba_ss
