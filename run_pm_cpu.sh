@@ -15,4 +15,4 @@ export OMP_PROC_BIND=spread
 
 
 #run the application:
-srun --ntasks=2048 --ntasks-per-node=1 --cpu_bind=cores /global/cfs/cdirs/m888/tgroves/network_benchmarking/bidibiba/bidibiba_ss
+srun --ntasks=2048 --ntasks-per-node=1 --cpu-bind=map_cpu:0 --cpu-freq=high /global/cfs/cdirs/m888/tgroves/network_benchmarking/bidibiba/bidibiba_ss

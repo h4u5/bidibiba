@@ -367,7 +367,7 @@ int main(int argc, char* argv[]){
         
         tvec.erase(remove_if(tvec.begin(), tvec.end(), isZero), tvec.end());
         sort(tvec.begin(), tvec.end());
-        cout << "A total of " << tvec.size() << " nodes participating from " 
+        cout << "A total of " << tvec.size() << " ranks participating from " 
             << groups.size() << " groups.\n"; 
         cout << "*****SUMMARY BW (MiB/s)*****\n";
         t_sum = accumulate(tvec.begin(), tvec.end(), 0);

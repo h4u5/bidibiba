@@ -20,4 +20,4 @@ export MPICH_OFI_NUM_NICS=4
 
 
 #run the application:
-srun --ntasks=2048 --ntasks-per-node=4 --cpu_bind=cores /global/cfs/cdirs/m888/tgroves/network_benchmarking/bidibiba/bidibiba_ss
+srun --ntasks=2048 --ntasks-per-node=4 --cpu-bind=map_cpu:48,32,16,0 --cpu-freq=high /global/cfs/cdirs/m888/tgroves/network_benchmarking/bidibiba/bidibiba_ss
